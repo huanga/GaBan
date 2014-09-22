@@ -117,14 +117,10 @@ class GaBan {
     public function getHashes($path) {
         $signature   = $this->signature($path);
 
-        $box32x32    = new Box(32,32);
-        $box16x128   = new Box(16,128);
-        $box128x16   = new Box(128,16);
-
         $fingerprint = array();
-        $fingerprint = array_merge($fingerprint, $this->fingerprint($path, $box32x32));
-        $fingerprint = array_merge($fingerprint, $this->fingerprint($path, $box16x128));
-        $fingerprint = array_merge($fingerprint, $this->fingerprint($path, $box128x16));
+        $fingerprint = array_merge($fingerprint, $this->fingerprint($path, new Box(32,32)));
+        $fingerprint = array_merge($fingerprint, $this->fingerprint($path, new Box(16,128)));
+        $fingerprint = array_merge($fingerprint, $this->fingerprint($path, new Box(128,16)));
 
         return array(
             'signature'   => $signature,
