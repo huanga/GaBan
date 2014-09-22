@@ -40,8 +40,8 @@ class GaBan {
     }
 
     public function normalize(ImageInterface $image) {
-        $min = 255;
-        $max = 0;
+        $min  = 255;
+        $max  = 0;
         $peak = 254;
 
         $dimension = $image->getSize();
