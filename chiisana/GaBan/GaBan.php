@@ -91,7 +91,9 @@ class GaBan {
     }
 
     public function fingerprint($path, Box $box) {
-        $image = $this->imagine->open($path);
+        $image = $this
+            ->imagine
+            ->open($path);
         $image->resize($box);
         $image
             ->effects()
@@ -99,13 +101,13 @@ class GaBan {
             ->blur(10);
 
         $dimension = $image->getSize();
+        $prints    = array();
 
-        $prints = array();
         for($x = 0; $x < $dimension->getWidth(); $x++) {
             for($y = 0; $y < $dimension->getHeight(); $y++) {
                 $pixelPosition = new Point($x,$y);
                 $pixelColor    = $image->getColorAt($pixelPosition);
-                $prints[] = $pixelColor->getRed();
+                $prints[]      = $pixelColor->getRed();
             }
         }
 
@@ -113,11 +115,11 @@ class GaBan {
     }
 
     public function getHashes($path) {
-        $signature = $this->signature($path);
+        $signature   = $this->signature($path);
 
-        $box32x32  = new Box(32,32);
-        $box16x128 = new Box(16,128);
-        $box128x16 = new Box(128,16);
+        $box32x32    = new Box(32,32);
+        $box16x128   = new Box(16,128);
+        $box128x16   = new Box(128,16);
 
         $fingerprint = array();
         $fingerprint = array_merge($fingerprint, $this->fingerprint($path, $box32x32));
