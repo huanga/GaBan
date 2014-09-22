@@ -1,0 +1,20 @@
+{
+    "name": "huanga/gaban",
+    "description": "Image banning library",
+    "minimum-stability": "stable",
+    "license": "proprietary",
+    "authors": [
+        {
+            "name": "Andy Huang",
+            "email": "andy[d]huang[a]terrandin[d]com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "chiisana\\GaBan\\" : "chiisana/GaBan"
+        }
+    },
+    "require": {
+        "imagine/imagine": "0.6.1"
+    }
+}
