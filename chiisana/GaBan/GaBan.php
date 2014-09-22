@@ -72,7 +72,7 @@ class GaBan {
             for($y = 0; $y < $dimension->getHeight(); $y++) {
                 $pixelPosition = new Point($x,$y);
                 $pixelColor    = $image->getColorAt($pixelPosition);
-                $shade           = ($pixelColor->getRed() - $displacement) * $scale;
+                $shade         = ($pixelColor->getRed() - $displacement) * $scale;
 
                 $newPixelColor = new RGBColor(new RGBPalette(), array($shade, $shade, $shade), $pixelColor->getAlpha());
                 $image
