@@ -9,14 +9,17 @@ use chiisana\GaBan\GaBan;
 //$fileA = './asset/949cab1b9fc916e56f8521a0ad5bb904.jpg';
 //$fileB = './asset/cfd71a9e304f735569e91de3a777e6ae.jpg';
 
-$fileA = './asset/example1.png';
-$fileB = './asset/example2.png';
+$fileA = './asset/Original.jpg';
+$fileB = './asset/Resized.jpg';
 
 $imagine       = new Imagine();
 $fingerprinter = new GaBan($imagine);
 
 $fingerprintA   = $fingerprinter->getHashes($fileA);
 $fingerprintB   = $fingerprinter->getHashes($fileB);
+
+echo $fingerprintA['signature']['findimagedupes.pl'] . "\r\n";
+echo $fingerprintB['signature']['findimagedupes.pl'] . "\r\n";
 
 if ($fingerprintA['signature'] === $fingerprintB['signature']) {
     echo "Same signature" . "\r\n";

@@ -16,7 +16,7 @@ class GaBan {
         $this->imagine = $imagine;
     }
 
-    public function findimagedupes($path) {
+    public function signature($path) {
         $image = $this->imagine->open($path);
         $image->resize(new Box(160,160));
         $image
@@ -27,12 +27,22 @@ class GaBan {
         $image->resize(new Box(16,16));
 
         $dimension = $image->getSize();
+        $colors    = array();
+        for($x = 0; $x < $dimension->getWidth(); $x++) {
+            for ($y = 0; $y < $dimension->getHeight(); $y++) {
+                $pixelPosition = new Point($x,$y);
+                $pixelColor    = $image->getColorAt($pixelPosition);
+                $colors[]      = $pixelColor->getRed();
+            }
+        }
+
+        $average   = array_sum($colors) / count($colors);
         $signature = array();
         for($x = 0; $x < $dimension->getWidth(); $x++) {
             for ($y = 0; $y < $dimension->getHeight(); $y++) {
                 $pixelPosition = new Point($x,$y);
                 $pixelColor    = $image->getColorAt($pixelPosition);
-                $signature[]   = ( $pixelColor->getRed() > 125 ) ? 0 : 1;
+                $signature[]   = ( $pixelColor->getRed() > $average ) ? 0 : 1;
             }
         }
 
