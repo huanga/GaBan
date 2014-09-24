@@ -1,4 +1,4 @@
 GaBan
 =====
 
-A simple image similarity identifier that can be used to identify similar images.
+A simple image fingerprinting library to fingerprint images for identification purposes.
