@@ -1,140 +1,61 @@
 <?php
 namespace chiisana\GaBan;
 
-use Imagine\Image\ImageInterface;
+use chiisana\GaBan\Exception\NoImageLoadedException;
+use chiisana\GaBan\Exception\RuntimeException;
+use chiisana\GaBan\Fingerprinter\FindimagedupesFingerprinter;
+use chiisana\GaBan\Fingerprinter\HistogramGridFingerprinter;
 use Imagine\Gd\Imagine;
-use Imagine\Image\Box;
-use Imagine\Image\Point;
-use Imagine\Image\Color;
-use Imagine\Image\Palette\Color\RGB as RGBColor;
-use Imagine\Image\Palette\RGB as RGBPalette;
+use Imagine\Image\ImageInterface;
+use Imagine\Exception\Exception as ImagineException;
 
 class GaBan {
     public $imagine;
+    public $image;
 
-    public function __construct(Imagine $imagine) {
+    public function __construct(Imagine $imagine = null) {
+        if (empty($imagine)) {
+            // BAD, should throw exception and DI this.
+            $imagine = new Imagine();
+        }
         $this->imagine = $imagine;
     }
 
-    public function signature($path) {
-        $image = $this->imagine->open($path);
-        $image->resize(new Box(160,160));
-        $image
-            ->effects()
-            ->grayscale()
-            ->blur(10);
-        $image = $this->normalize($image);
-        $image->resize(new Box(16,16));
-
-        $dimension = $image->getSize();
-        $colors    = array();
-        for($x = 0; $x < $dimension->getWidth(); $x++) {
-            for ($y = 0; $y < $dimension->getHeight(); $y++) {
-                $pixelPosition = new Point($x,$y);
-                $pixelColor    = $image->getColorAt($pixelPosition);
-                $colors[]      = $pixelColor->getRed();
-            }
+    public function setImageFromPath($path) {
+        try {
+            $image = $this
+                ->imagine
+                ->open($path);
+            $this->setImage($image);
+        } catch ( ImagineException $e ) {
+            throw new RuntimeException($e->getMessage(), $e->getCode(), $e);
         }
-
-        $average   = array_sum($colors) / count($colors);
-        $signature = array();
-        for($x = 0; $x < $dimension->getWidth(); $x++) {
-            for ($y = 0; $y < $dimension->getHeight(); $y++) {
-                $pixelPosition = new Point($x,$y);
-                $pixelColor    = $image->getColorAt($pixelPosition);
-                $signature[]   = ( $pixelColor->getRed() > $average ) ? 0 : 1;
-            }
-        }
-
-        return implode('',$signature);
     }
 
-    public function normalize(ImageInterface $image) {
-        $min  = 255;
-        $max  = 0;
-        $peak = 254;
+    public function setImage(ImageInterface $image) {
+        $this->image = $image->copy();
 
-        $dimension = $image->getSize();
-
-        // Calculate min/max of each color space
-        for($x = 0; $x < $dimension->getWidth(); $x++) {
-            for($y = 0; $y < $dimension->getHeight(); $y++) {
-                $pixelPosition = new Point($x,$y);
-                $pixelColor    = $image->getColorAt($pixelPosition);
-                $red           = $pixelColor->getRed();
-
-                $min = ($red<$min) ? $red : $min;
-                $max = ($red>$max) ? $red : $max;
-            }
-        }
-
-        // Calculate the normalized range
-        $displacement = $min;
-
-        if($max != $displacement) {
-            $scale = $peak / ($max - $displacement);
-        } else {
-            $scale = 1;
-        }
-
-        // Re-draw Normalized Image
-        for($x = 0; $x < $dimension->getWidth(); $x++) {
-            for($y = 0; $y < $dimension->getHeight(); $y++) {
-                $pixelPosition = new Point($x,$y);
-                $pixelColor    = $image->getColorAt($pixelPosition);
-                $shade         = ($pixelColor->getRed() - $displacement) * $scale;
-
-                $newPixelColor = new RGBColor(new RGBPalette(), array($shade, $shade, $shade), $pixelColor->getAlpha());
-                $image
-                    ->draw()
-                    ->dot($pixelPosition, $newPixelColor);
-            }
-        }
-
-        return $image;
+        return $this;
     }
 
-    public function signature($path) {
-        return array(
-            'findimagedupes.pl' => $this->findimagedupes($path)
-        );
-    }
-
-    public function fingerprint($path, Box $box) {
-        $image = $this
-            ->imagine
-            ->open($path);
-        $image->resize($box);
-        $image
-            ->effects()
-            ->grayscale()
-            ->blur(10);
-
-        $dimension = $image->getSize();
-        $prints    = array();
-
-        for($x = 0; $x < $dimension->getWidth(); $x++) {
-            for($y = 0; $y < $dimension->getHeight(); $y++) {
-                $pixelPosition = new Point($x,$y);
-                $pixelColor    = $image->getColorAt($pixelPosition);
-                $prints[]      = $pixelColor->getRed();
-            }
+    // TODO: Refactor these so we are not doing new XxxxxFingerprinter() and deal with them using factory and generics
+    public function getSignature() {
+        if (empty($this->image)) {
+            throw new NoImageLoadedException();
         }
 
-        return $prints;
+        $fingerprinter = new FindimagedupesFingerprinter();
+
+        return $fingerprinter->run($this->image);
     }
 
-    public function getHashes($path) {
-        $signature   = $this->signature($path);
+    public function getHash() {
+        if (empty($this->image)) {
+            throw new NoImageLoadedException();
+        }
 
-        $fingerprint = array();
-        $fingerprint = array_merge($fingerprint, $this->fingerprint($path, new Box(32,32)));
-        $fingerprint = array_merge($fingerprint, $this->fingerprint($path, new Box(16,128)));
-        $fingerprint = array_merge($fingerprint, $this->fingerprint($path, new Box(128,16)));
+        $fingerprinter = new HistogramGridFingerprinter();
 
-        return array(
-            'signature'   => $signature,
-            'fingerprint' => $fingerprint
-        );
+        return $fingerprinter->run($this->image);
     }
 } 
