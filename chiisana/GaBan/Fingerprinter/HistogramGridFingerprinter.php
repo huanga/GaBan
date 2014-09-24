@@ -6,7 +6,7 @@ use Imagine\Image\ImageInterface;
 use Imagine\Image\Point;
 
 class HistogramGridFingerprinter extends GenericFingerprinter implements FingerprintStrategyInterface {
-    CONST DEFAULT_GRID_SIZE        = 8;
+    CONST DEFAULT_GRID_SIZE        = 16;
     CONST DEFAULT_GRID_SECTOR_SIZE = 10;
     CONST DEFAULT_BLUR_RATIO       = 32;      // Blurring factor to combat compression artifacts
 
@@ -53,7 +53,10 @@ class HistogramGridFingerprinter extends GenericFingerprinter implements Fingerp
 
                 for($localX = 0; $localX < $this->configuration['gridSectorSize']; $localX++) {
                     for($localY = 0; $localY < $this->configuration['gridSectorSize']; $localY++) {
-                        $pixelPosition = new Point($localX, $localY);
+                        $pixelPosition = new Point(
+                            ($sectorX * $this->configuration['gridSectorSize']) + $localX,
+                            ($sectorY * $this->configuration['gridSectorSize']) + $localY
+                        );
                         $pixelColor    = $localImage->getColorAt($pixelPosition);
                         $gridRed[]     = $pixelColor->getRed();
                         $gridGreen[]   = $pixelColor->getGreen();
