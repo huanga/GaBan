@@ -62,10 +62,10 @@ class HistogramGridFingerprinter extends GenericFingerprinter implements Fingerp
                     }
                 }
 
-                $red   = array_sum($gridRed)   / count($gridRed);
-                $green = array_sum($gridGreen) / count($gridGreen);
-                $blue  = array_sum($gridBlue)  / count($gridBlue);
-                $alpha = array_sum($gridAlpha) / count($gridAlpha);
+                $red   = intval(array_sum($gridRed)   / count($gridRed));
+                $green = intval(array_sum($gridGreen) / count($gridGreen));
+                $blue  = intval(array_sum($gridBlue)  / count($gridBlue));
+                $alpha = intval(array_sum($gridAlpha) / count($gridAlpha));
 
                 $histogram[] =
                     base_convert($red, 10, 16) .
