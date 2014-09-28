@@ -5,8 +5,7 @@
     "license": "proprietary",
     "authors": [
         {
-            "name": "Andy Huang",
-            "email": "andy[d]huang[a]terrandin[d]com"
+            "name": "Andy Huang"
         }
     ],
     "autoload": {
