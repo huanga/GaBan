@@ -10,15 +10,22 @@ use Imagine\Image\ImageInterface;
 use Imagine\Exception\Exception as ImagineException;
 
 class GaBan {
+    public $configuration;
     public $imagine;
     public $image;
+    public $fingerprinterFactory;
 
-    public function __construct(Imagine $imagine = null) {
+    public function __construct(Imagine $imagine = null, array $configuration = []) {
         if (empty($imagine)) {
             // BAD, should throw exception and DI this.
             $imagine = new Imagine();
         }
-        $this->imagine = $imagine;
+
+        $this->imagine              = $imagine;
+        $this->configuration        = $configuration;
+
+        // We should probably consider DI this, or build this via configuration
+        $this->fingerprinterFactory = new FingerprinterFactory();
     }
 
     public function setImageFromPath($path) {
@@ -44,7 +51,9 @@ class GaBan {
             throw new NoImageLoadedException();
         }
 
-        $fingerprinter = new FindimagedupesFingerprinter();
+        $fingerprinter = $this
+            ->fingerprinterFactory
+            ->getFingerprinter('Findimagedupes', $this->configuration);
 
         return $fingerprinter->run($this->image);
     }
@@ -54,7 +63,9 @@ class GaBan {
             throw new NoImageLoadedException();
         }
 
-        $fingerprinter = new HistogramGridFingerprinter();
+        $fingerprinter = $this
+            ->fingerprinterFactory
+            ->getFingerprinter('HistogramGrid', $this->configuration);
 
         return $fingerprinter->run($this->image);
     }
