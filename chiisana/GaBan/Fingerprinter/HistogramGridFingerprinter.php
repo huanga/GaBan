@@ -6,7 +6,7 @@ use Imagine\Image\ImageInterface;
 use Imagine\Image\Point;
 
 class HistogramGridFingerprinter extends GenericFingerprinter implements FingerprintStrategyInterface {
-    CONST DEFAULT_GRID_SIZE        = 16;
+    CONST DEFAULT_GRID_SIZE        = 8;
     CONST DEFAULT_GRID_SECTOR_SIZE = 10;
     CONST DEFAULT_BLUR_RATIO       = 32;      // Blurring factor to combat compression artifacts
 

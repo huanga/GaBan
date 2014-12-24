@@ -8,9 +8,9 @@ use Imagine\Image\Palette\RGB as RGBPalette;
 use Imagine\Image\Point;
 
 class FindimagedupesFingerprinter extends GenericFingerprinter implements FingerprintStrategyInterface {
-    CONST DEFAULT_GRID_SIZE  = 8;       // 8x8 by default; produces a 64bit signature
-    CONST DEFAULT_GRID_RATIO = 10;      // Scale image to 10x grid size for sampling
-    CONST DEFAULT_BLUR_RATIO = 32;      // Blurring factor to combat compression artifacts
+    CONST DEFAULT_GRID_SIZE        = 8;       // 8x8 by default; produces a 64bit signature
+    CONST DEFAULT_GRID_SECTOR_SIZE = 10;      // Scale image to 10x grid size for sampling
+    CONST DEFAULT_BLUR_RATIO       = 32;      // Blurring factor to combat compression artifacts
 
     CONST DEFAULT_NORMALIZE_PEAK = 254; // Peak value for normalized image (used for scaling color space)
     CONST INITIAL_NORMALIZE_MIN  = 0;
@@ -19,13 +19,14 @@ class FindimagedupesFingerprinter extends GenericFingerprinter implements Finger
     public $configuration;
 
     public function __construct(array $configuration = []) {
-        $configuration['gridSize'] = isset($configuration['gridSize']) ? $configuration['gridSize'] : self::DEFAULT_GRID_SIZE;
-        $configuration['gridRatio'] = isset($configuration['gridRatio']) ? $configuration['gridRatio'] : self::DEFAULT_GRID_RATIO;
-        $configuration['blurRatio'] = isset($configuration['blurRatio']) ? $configuration['blurRatio'] : self::DEFAULT_BLUR_RATIO;
+        $configuration['sectorsWide']    = isset($configuration['sectorsWide']) ? $configuration['sectorsWide'] : self::DEFAULT_GRID_SIZE;
+        $configuration['sectorsHigh']    = isset($configuration['sectorsHigh']) ? $configuration['sectorsHigh'] : self::DEFAULT_GRID_SIZE;
+        $configuration['gridSectorSize'] = isset($configuration['gridSectorSize']) ? $configuration['gridSectorSize'] : self::DEFAULT_GRID_SECTOR_SIZE;
+        $configuration['blurRatio']      = isset($configuration['blurRatio']) ? $configuration['blurRatio'] : self::DEFAULT_BLUR_RATIO;
 
         $configuration['normalizePeak'] = isset($configuration['normalizePeak']) ? $configuration['normalizePeak'] : self::DEFAULT_NORMALIZE_PEAK;
-        $configuration['normalizeMin'] = isset($configuration['normalizeMin']) ? $configuration['normalizeMin'] : self::INITIAL_NORMALIZE_MIN;
-        $configuration['normalizeMax'] = isset($configuration['normalizeMax']) ? $configuration['normalizeMax'] : self::INITIAL_NORMALIZE_MAX;
+        $configuration['normalizeMin']  = isset($configuration['normalizeMin']) ? $configuration['normalizeMin'] : self::INITIAL_NORMALIZE_MIN;
+        $configuration['normalizeMax']  = isset($configuration['normalizeMax']) ? $configuration['normalizeMax'] : self::INITIAL_NORMALIZE_MAX;
 
         parent::__construct($configuration);
     }
@@ -35,11 +36,11 @@ class FindimagedupesFingerprinter extends GenericFingerprinter implements Finger
         $localImage = $image->copy();
 
         $prepareSize = new Box(
-            $this->configuration['gridSize'] * $this->configuration['gridRatio'],
-            $this->configuration['gridSize'] * $this->configuration['gridRatio']
+            $this->configuration['sectorsWide'] * $this->configuration['gridSectorSize'],
+            $this->configuration['sectorsHigh'] * $this->configuration['gridSectorSize']
         );
 
-        $scaledSize = new Box( $this->configuration['gridSize'], $this->configuration['gridSize'] );
+        $scaledSize = new Box( $this->configuration['sectorsWide'], $this->configuration['sectorsHigh'] );
 
         $localImage
             ->resize($prepareSize)
