@@ -16,8 +16,6 @@ class FindimagedupesFingerprinter extends GenericFingerprinter implements Finger
     CONST INITIAL_NORMALIZE_MIN  = 0;
     CONST INITIAL_NORMALIZE_MAX  = 255;
 
-    public $configuration;
-
     public function __construct(array $configuration = []) {
         $configuration['sectorsWide']    = isset($configuration['sectorsWide']) ? $configuration['sectorsWide'] : self::DEFAULT_GRID_SIZE;
         $configuration['sectorsHigh']    = isset($configuration['sectorsHigh']) ? $configuration['sectorsHigh'] : self::DEFAULT_GRID_SIZE;

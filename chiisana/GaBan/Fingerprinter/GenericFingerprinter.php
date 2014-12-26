@@ -7,10 +7,10 @@ abstract class GenericFingerprinter implements FingerprintStrategyInterface {
     public $configuration;
 
     public function __construct(array $configuration = []) {
-        $this->configure($configuration);
+        $this->setConfiguration($configuration);
     }
 
-    public function configure(array $configuration) {
+    public function setConfiguration(array $configuration) {
         $this->configuration = $configuration;
     }
 

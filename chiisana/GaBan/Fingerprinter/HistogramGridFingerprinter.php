@@ -10,8 +10,6 @@ class HistogramGridFingerprinter extends GenericFingerprinter implements Fingerp
     CONST DEFAULT_GRID_SECTOR_SIZE = 10;
     CONST DEFAULT_BLUR_RATIO       = 32;      // Blurring factor to combat compression artifacts
 
-    public $configuration;
-
     public function __construct(array $configuration = [])
     {
         $configuration['sectorsWide'] = isset($configuration['sectorsWide']) ? $configuration['sectorsWide'] : self::DEFAULT_GRID_SIZE;
