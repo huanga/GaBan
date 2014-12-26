@@ -47,9 +47,7 @@ class GaBan {
 
     // TODO: Refactor these so we are not doing new XxxxxFingerprinter() and deal with them using factory and generics
     public function getSignature() {
-        if (empty($this->image)) {
-            throw new NoImageLoadedException();
-        }
+        $this->validateLoaded();
 
         $fingerprinter = $this
             ->fingerprinterFactory
@@ -59,14 +57,18 @@ class GaBan {
     }
 
     public function getHash() {
-        if (empty($this->image)) {
-            throw new NoImageLoadedException();
-        }
+        $this->validateLoaded();
 
         $fingerprinter = $this
             ->fingerprinterFactory
             ->getFingerprinter('HistogramGrid', $this->configuration);
 
         return $fingerprinter->run($this->image);
+    }
+
+    public function validateLoaded() {
+        if (empty($this->image)) {
+            throw new NoImageLoadedException();
+        }
     }
 } 
