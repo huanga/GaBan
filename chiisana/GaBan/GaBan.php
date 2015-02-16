@@ -36,6 +36,8 @@ class GaBan {
             $this->setImage($image);
         } catch ( ImagineException $e ) {
             throw new RuntimeException($e->getMessage(), $e->getCode(), $e);
+        } catch ( Exception $e ) {
+            throw new RuntimeException($e->getMessage(), $e->getCode(), $e);
         }
     }
 
@@ -62,6 +64,16 @@ class GaBan {
         $fingerprinter = $this
             ->fingerprinterFactory
             ->getFingerprinter('HistogramGrid', $this->configuration);
+
+        return $fingerprinter->run($this->image);
+    }
+
+    public function getEdgeDetection() {
+        $this->validateLoaded();
+
+        $fingerprinter = $this
+            ->fingerprinterFactory
+            ->getFingerprinter('EdgeDetection', $this->configuration);
 
         return $fingerprinter->run($this->image);
     }

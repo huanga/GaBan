@@ -4,7 +4,7 @@ namespace chiisana\GaBan;
 use chiisana\GaBan\Exception\InvalidFingerprinterException;
 
 class FingerprinterFactory {
-    public $validFingerprinter = ['Findimagedupes', 'HistogramGrid'];
+    public $validFingerprinter = ['Findimagedupes', 'HistogramGrid', 'EdgeDetection'];
 
     public function getFingerprinter($fingerprinter, array $configuration = []) {
         if (!in_array($fingerprinter, $this->validFingerprinter)) {
